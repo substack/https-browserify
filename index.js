@@ -12,3 +12,9 @@ https.request = function (params, cb) {
     params.protocol = 'https:';
     return http.request.call(this, params, cb);
 }
+
+https.get = function (params, cb) {
+    if (!params) params = {}
+    params.protocol = 'https:';
+    return http.get.call(this, params, cb);
+}
