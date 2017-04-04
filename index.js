@@ -1,4 +1,5 @@
 var http = require('http')
+var url = require('url')
 
 var https = module.exports
 
@@ -7,14 +8,24 @@ for (var key in http) {
 }
 
 https.request = function (params, cb) {
-  if (!params) params = {}
-  params.scheme = 'https'
-  params.protocol = 'https:'
+  params = validateParams(params)
   return http.request.call(this, params, cb)
 }
 
 https.get = function (params, cb) {
-  if (!params) params = {}
-  params.protocol = 'https:'
+  params = validateParams(params)
   return http.get.call(this, params, cb)
+}
+
+function validateParams (params) {
+  if (typeof params === 'string') {
+    params = url.parse(params)
+  }
+  if (!params.protocol) {
+    params.protocol = 'https:'
+  }
+  if (params.protocol !== 'https:') {
+    throw new Error('Protocol "' + params.protocol + '" not supported. Expected "https:"')
+  }
+  return params
 }
